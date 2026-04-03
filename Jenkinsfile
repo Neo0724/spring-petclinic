@@ -1,13 +1,6 @@
 pipeline {
+    agent any
     
-    agent {
-        docker { 
-            image 'node:24.14.1-alpine3.23' 
-            // This line is the magic fix:
-            args '-v /var/run/docker.sock:/var/run/docker.sock'
-        }
-    }
-
     tools {
         maven 'Maven3'
     }
