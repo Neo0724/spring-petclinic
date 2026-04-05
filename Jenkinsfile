@@ -1,21 +1,17 @@
 pipeline {    
     agent any
     
-    tools {
-        maven 'Maven3'
-    }
-    
     stages {
 
         stage('Build') {
             steps {
-                bat 'mvn clean package -DskipTests'
+                bat './mvnw clean package -DskipTests'
             }
         }
 
         stage('Test') {
             steps {
-                bat 'mvn test'
+                bat './mvnw test'
             }
         }
 
