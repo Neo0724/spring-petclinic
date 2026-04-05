@@ -27,9 +27,11 @@ pipeline {
 
         stage('Run Container') {
             steps {
-                bat 'docker stop myapp exit /b 0'
-                bat 'docker rm myapp exit /b 0'
-                bat 'docker run -d --name myapp -p 8081:8080 myapp:latest'
+                 bat '''
+                        cmd /c "docker stop myapp || exit /b 0"
+                        cmd /c "docker rm myapp || exit /b 0"
+                        docker run -d --name myapp -p 8081:8080 myapp:latest
+                    '''
             }
         }
     }
