@@ -11,21 +11,37 @@ pipeline {
     stages {
 
         stage('Build') {
+            agent {
+                docker {
+                    image 'maven:3.9.6-eclipse-temurin-17'
+                }
+            }
+
             steps {
-                bat './mvnw clean package -DskipTests'
+                sh 'chmod +x mvnw'
+                sh './mvnw clean package -DskipTests -Dspring.profiles.active=mysql'
+                stash name: 'spring-pet-clinic-jar', includes: 'target/*.jar'
             }
         }
 
-        // stage('Test') {
-        //     steps {
-        //         bat './mvnw test jacoco:report'
-        //     }
-        // }
+        stage('Test') {
+            agent {
+                docker {
+                    image 'maven:3.9.6-eclipse-temurin-17'
+                }
+            }
+
+            steps {
+                sh 'chmod +x mvnw'
+                sh './mvnw test jacoco:report'
+            }
+        }
 
         stage('Docker Build & Run Container') {
             steps {
-                 bat 'docker compose down'
-                 bat 'docker compose up -d'
+                unstash 'spring-pet-clinic-jar'
+                bat 'docker compose down'
+                bat 'docker compose up -d'
             }
         }
     }
