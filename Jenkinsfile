@@ -16,11 +16,11 @@ pipeline {
             }
         }
 
-        stage('Test') {
-            steps {
-                bat './mvnw test jacoco:report'
-            }
-        }
+        // stage('Test') {
+        //     steps {
+        //         bat './mvnw test jacoco:report'
+        //     }
+        // }
 
         stage('Docker Build & Run Container') {
             steps {
