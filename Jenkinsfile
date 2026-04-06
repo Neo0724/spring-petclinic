@@ -26,7 +26,7 @@ pipeline {
             steps {
                  bat '''
                         docker compose down
-                        docker compose up -p spring_pet_clinic -d --build
+                        docker compose up -d --build
                 '''
             }
         }
