@@ -1,0 +1,44 @@
+services:
+  pet-clinic:
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    container_name: spring-pet-clinic-app
+    image: spring-pet-clinic-app:v1
+    ports:
+      - "8081:8080"
+    networks:
+      - spring-pet-clinic-network
+    environment:
+      - MYSQL_URL=${MYSQL_URL}
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASS=${MYSQL_PASS}
+    depends_on:
+      mysql-db:
+        condition: service_healthy
+
+
+  mysql-db:
+    image: mysql:8.0
+    ports:
+      - "3307:3306"
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASS}
+      - MYSQL_DATABASE=${MYSQL_DB}
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - spring-pet-clinic-network
+    healthcheck:
+      test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost"]
+      timeout: 20s
+      retries: 10
+
+networks:
+  spring-pet-clinic-network:
+    driver: bridge
+
+volumes: 
+  mysql_data:
