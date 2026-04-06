@@ -3,6 +3,7 @@ services:
     build:
       context: .
       dockerfile: ./Dockerfile
+    container_name: spring-pet-clinic-app
     image: spring-pet-clinic-app:v1
     ports:
       - "8081:8080"
