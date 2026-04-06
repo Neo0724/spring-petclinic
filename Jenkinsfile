@@ -24,10 +24,8 @@ pipeline {
 
         stage('Docker Build & Run Container') {
             steps {
-                 bat '''
-                        docker compose build pet-clinic 
-                        docker compose up -d
-                '''
+                 bat 'docker compose down'
+                 bat 'docker compose up -d'
             }
         }
     }
