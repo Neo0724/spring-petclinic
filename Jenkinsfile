@@ -11,7 +11,7 @@ pipeline {
     stages {
         stage('Build') {
             steps {
-                bat './mvnw clean package -DskipTests -Dspring.profiles.active=mysql'
+                bat './mvnw clean package -DskipTests "-Dspring.profiles.active=mysql"'
             }
         }
 
