@@ -19,6 +19,14 @@ pipeline {
             }
         }
 
+        stage('SonarQube Analysis') {
+            steps {
+                withSonarQubeEnv('SonarQube') {
+                    sh 'mvn clean verify sonar:sonar'
+                }
+            }
+        }
+
         stage('Docker Build') {
             steps {
                 sh 'docker build -t myapp:latest .'
