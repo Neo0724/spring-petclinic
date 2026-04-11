@@ -24,7 +24,7 @@ pipeline {
         stage('Docker Build & Run Container') {
             steps {
                 bat 'docker compose down'
-                bat 'docker compose up -d'
+                bat 'docker compose -f docker-compose.yml up -d'
             }
         }
     }
