@@ -83,7 +83,7 @@ pipeline {
             archiveArtifacts artifacts: 'target/spring-petclinic-4.0.0-SNAPSHOT.jar'
             archiveArtifacts artifacts: 'target/site/jacoco/**/*'
             archiveArtifacts artifacts: 'target/surefire-reports/**/*'
-            archiveArtifacts artifacts: 'target/site/surefire-report.html'
+            archiveArtifacts artifacts: 'target/reports/surefire-report.html'
         }
 
         success {
