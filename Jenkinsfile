@@ -3,10 +3,9 @@ pipeline {
 
     environment {
         IMG_NM = "petclinic-app"
-        MYSQL_URL="jdbc:mysql://mysql-db:3306/petclinic"
-        MYSQL_USER="petclinic"
-        MYSQL_PASS="petclinic"
-        MYSQL_DB="petclinic"
+        DB_URL = "jdbc:postgresql://localhost:5432/petclinic"
+        DB_USER = "petclinic"
+        DB_PASS = "petclinic"
     }
 
     stages {
@@ -28,13 +27,13 @@ pipeline {
 
             stage('Build') {
                 steps {
-                    sh './mvnw clean package -DskipTests "-Dspring.profiles.active=mysql"'
+                    sh './mvnw clean package -DskipTests "-Dspring.profiles.active=postgres"'
                 }
             }
 
             stage('Test and Coverage Report') {
                 steps {
-                    sh './mvnw test jacoco:report -Dspring.profiles.active=mysql'
+                    sh './mvnw test jacoco:report -Dspring.profiles.active=postgres'
                 }
             }
 
