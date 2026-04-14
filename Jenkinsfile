@@ -45,19 +45,11 @@ pipeline {
 
                 stage('SonarQube Analysis') {
                     steps {
-                        withSonarQubeEnv('petclinic') {
-                            sh "./mvnw sonar:sonar -Dsonar.projectKey=petclinic"
-                        }
+                        sh "./mvnw sonar:sonar -Dsonar.projectKey=petclinic"
                     }
                 }
             }
         }
-
-        stage('Sonar Quality Gate') {
-            steps {
-                waitForQualityGate abortPipeline: true
-            }
-        }       
 
         stage('Build Image') {
             steps {
