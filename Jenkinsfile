@@ -2,15 +2,11 @@ pipeline {
     agent any
 
     environment {
-        IMAGE_NAME = "petclinic-app"
-    }
-
-    tools {
-        jdk 'JDK17'
+        IMG_NM = "petclinic-app"
     }
 
     stages {
-
+        // Check Docker Deamon is running
         stage('Check Tools') {
             steps {
                 sh '''
@@ -26,15 +22,27 @@ pipeline {
                 }
             }
 
-            stage('Test + Coverage') {
+            stage('Test and Coverage Report') {
                 steps {
                     sh './mvnw test jacoco:report'
                 }
             }
 
+            stage('SonarQube Analysis') {
+                steps {
+                    withCredentials([string(credentialsId: 'sonar_id1', variable: 'SONAR_TOKEN')]) {
+                    echo "Performing Static Code Analysis..."
+                    sh """
+                        ./mvnw sonar:sonar \
+                        -Dsonar.token=${SONAR_TOKEN} \
+                    """
+                    }
+                }
+            }
+
             stage('Docker Build') {
                 steps {
-                    sh "./mvnw spring-boot:build-image -Dspring-boot.build-image.imageName=${IMAGE_NAME}"
+                    sh 'docker build -t ${IMG_NM} .'   
                 }
             }
 
@@ -43,28 +51,33 @@ pipeline {
                     sh '''
                     docker stop myapp || true
                     docker rm myapp || true
-                    docker run --name myapp -d -p 8080:8080 ${IMAGE_NAME}
+                    docker run --name myapp -d -p 8080:8080 ${IMG_NM}
                     '''
                 }
             }
-    }
+
+            stage ('Upload Artifacts and Report'){
+                steps {
+                    // archieve jar file and report for download purpose
+                    archiveArtifacts artifacts: 'target/spring-petclinic-4.0.0-SNAPSHOT.jar'
+                    archiveArtifacts artifacts: 'target/site/jacoco/**/*'
+                    archiveArtifacts artifacts: 'target/surefire-reports/**/*'
+                }
+            }
+     }
 
     post {
         always {
-            sh 'echo Checking target folder...'
-            sh 'ls -l target || true'
-    
-            junit 'target/surefire-reports/*.xml'
-    
-            jacoco(
-                execPattern: 'target/jacoco.exec',
-                classPattern: 'target/classes',
-                sourcePattern: 'src/main/java'
-            )
-            
-        archiveArtifacts artifacts: 'target/spring-petclinic-4.0.0-SNAPSHOT.jar', fingerprint: true
-        archiveArtifacts artifacts: 'target/site/jacoco/**/*', fingerprint: true
-        archiveArtifacts artifacts: 'target/surefire-reports/**/*', fingerprint: true
+            echo 'Cleaning up workspace'
+            deleteDir()
         }
+
+        success {
+            echo 'Project Build succeeded!!!'
         }
+
+        failure {
+            echo 'ProjectBuild failed!'
+        }
+    }
 }
