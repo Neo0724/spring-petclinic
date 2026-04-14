@@ -21,7 +21,7 @@ pipeline {
                 stage('Start Database') {
                     steps {
                         sh 'docker compose down'
-                        sh 'docker rm -f petclinic-postgres'
+                        sh 'docker rm -f petclinic-postgres' || true
                         sh 'docker compose up -d postgres'
                     }
                 }
