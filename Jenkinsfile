@@ -45,9 +45,8 @@ pipeline {
 
                 stage('SonarQube Analysis') {
                     steps {
-                        // Changed 'SonarQube' to 'petclinic' to match your screenshot
                         withSonarQubeEnv('petclinic') {
-                            sh "./mvnw sonar:sonar -Dsonar.projectKey=petclinic-app"
+                            sh "./mvnw sonar:sonar -Dsonar.projectKey=petclinic
                         }
                     }
                 }
