@@ -1,10 +1,9 @@
 pipeline {
-    agent {
-        docker {
-            image 'maven:3.9.9-eclipse-temurin-21'
-        }
-    }
+    agent any
 
+    environment {
+        IMAGE_NAME = "petclinic-app"
+    }
     stages {
 
         stage('Check Tools') {
@@ -21,19 +20,19 @@ pipeline {
 
             stage('Build') {
                 steps {
-                    sh 'mvn clean package -DskipTests'
+                    sh './mvnw clean package -DskipTests'
                 }
             }
 
             stage('Test + Coverage') {
                 steps {
-                    sh 'mvn test jacoco:report'
+                    sh './mvnw test jacoco:report'
                 }
             }
 
-            stage('Build Image') {
+            stage('Docker Build') {
                 steps {
-                    sh 'mvn spring-boot:build-image -Dspring-boot.build-image.imageName=myapp:latest'
+                    sh "./mvnw spring-boot:build-image -Dspring-boot.build-image.imageName=${IMAGE_NAME}"
                 }
             }
 
@@ -42,7 +41,7 @@ pipeline {
                     sh '''
                     docker stop myapp || true
                     docker rm myapp || true
-                    docker run --name myapp -d -p 8080:8080 myapp:latest
+                    docker run --name myapp -d -p 8080:8080 ${IMAGE_NAME}
                     '''
                 }
             }
