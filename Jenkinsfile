@@ -18,7 +18,7 @@ pipeline {
         stage('Start Database') {
             steps {
                 sh 'docker compose down'
-                sh 'docker compose up postgres'
+                sh 'docker compose up -d postgres'
                 sleep 10
             }
         }
