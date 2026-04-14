@@ -21,7 +21,7 @@ pipeline {
         stage('Start Database') {
             steps {
                 sh 'docker compose down'
-                sh 'docker compose up -d mysql'
+                sh 'docker compose up -d postgres'
             }
         }
 
