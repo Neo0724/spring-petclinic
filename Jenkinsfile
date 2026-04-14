@@ -34,7 +34,7 @@ pipeline {
 
             stage('Test and Coverage Report') {
                 steps {
-                    sh './mvnw test jacoco:report'
+                    sh './mvnw test jacoco:report -Dspring.profiles.active=mysql'
                 }
             }
 
