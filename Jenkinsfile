@@ -2,39 +2,43 @@ pipeline {
     agent any
 
     stages {
-        // Check Tools Installed.
-        stage('Check Tools') {
-            steps {
-                sh 'echo "Checking Docker..."'
-                sh 'docker -v || echo "Docker NOT found"'
-            }
-        }
-        
-        stage('Build') {
-            steps {
-                sh './mvnw clean package -DskipTests'
-            }
-        }
 
-        stage('Test + Coverage') {
-            steps {
-                sh './mvnw test jacoco:report'
+            stage('Check Tools') {
+                steps {
+                    sh '''
+                    echo "Checking Docker..."
+                    docker -v || exit 1
+                    '''
+                }
             }
-        }
 
-        stage('Docker Build') {
-            steps {
-                sh 'docker build -t myapp:latest .'
+            stage('Build') {
+                steps {
+                    sh './mvnw clean package -DskipTests'
+                }
             }
-        }
 
-        stage('Run Container') {
-            steps {
-                sh "docker stop myapp || true"
-                sh "docker rm myapp || true"
-                sh 'docker run --name myapp -d -p 8080:8080 myapp:latest'
+            stage('Test + Coverage') {
+                steps {
+                    sh './mvnw test jacoco:report'
+                }
             }
-        }
+
+            stage('Build Image') {
+                steps {
+                    sh './mvnw spring-boot:build-image -Dspring-boot.build-image.imageName=myapp:latest'
+                }
+            }
+
+            stage('Run Container') {
+                steps {
+                    sh '''
+                    docker stop myapp || true
+                    docker rm myapp || true
+                    docker run --name myapp -d -p 8080:8080 myapp:latest
+                    '''
+                }
+            }
     }
 
     post {
