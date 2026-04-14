@@ -7,7 +7,7 @@ pipeline {
 
     stages {
         stage('Init and Build Project') {
-            parrellel {
+            parallel {
                 // Check Docker Deamon is running
                 stage('Check Tools') {
                     steps {
@@ -94,7 +94,7 @@ pipeline {
         }
 
         failure {
-            echo 'ProjectBuild failed!'
+            echo 'Project Build failed!'
         }
     }
 }
