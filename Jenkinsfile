@@ -23,7 +23,6 @@ pipeline {
                         sh 'docker compose down'
                         sh 'docker rm -f petclinic-postgres'
                         sh 'docker compose up -d postgres'
-                        sleep 10
                     }
                 }
 
