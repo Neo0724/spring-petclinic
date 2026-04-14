@@ -20,8 +20,8 @@ pipeline {
                 // start postgres database
                 stage('Start Database') {
                     steps {
-                        sh 'docker compose down'
-                        sh 'docker rm -f petclinic-postgres' || true
+                        sh 'docker stop petclinic-postgres || true'
+                        sh 'docker rm petclinic-postgres || true'
                         sh 'docker compose up -d postgres'
                     }
                 }
@@ -39,7 +39,7 @@ pipeline {
             parallel {
                 stage('Test and Coverage Report') {
                     steps {
-                        sh './mvnw test jacoco:report'
+                        sh './mvnw test jacoco:report surefire-report:report-only'
                     }
                 }
 
@@ -83,6 +83,7 @@ pipeline {
             archiveArtifacts artifacts: 'target/spring-petclinic-4.0.0-SNAPSHOT.jar'
             archiveArtifacts artifacts: 'target/site/jacoco/**/*'
             archiveArtifacts artifacts: 'target/surefire-reports/**/*'
+            archiveArtifacts artifacts: 'target/site/surefire-report.html'
         }
 
         success {
