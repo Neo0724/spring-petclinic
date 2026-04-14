@@ -31,7 +31,7 @@ pipeline {
 sh '''
 ./mvnw clean package -DskipTests \
 -Dspring.profiles.active=postgres \
--Dspring.datasource.url=jdbc:postgresql://localhost:5432/petclinic
+-Dspring.datasource.url=jdbc:postgresql://host.docker.internal:5432/petclinic
 '''                }
             }
 
@@ -40,7 +40,7 @@ sh '''
 sh '''
 ./mvnw test jacoco:report \
 -Dspring.profiles.active=postgres \
--Dspring.datasource.url=jdbc:postgresql://localhost:5432/petclinic \
+-Dspring.datasource.url=jdbc:postgresql://host.docker.internal:5432/petclinic \
 -Dspring.datasource.username=petclinic \
 -Dspring.datasource.password=petclinic
 '''                }
