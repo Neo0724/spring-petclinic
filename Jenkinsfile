@@ -28,14 +28,22 @@ pipeline {
 
             stage('Build') {
                 steps {
-                    sh './mvnw clean package -DskipTests "-Dspring.profiles.active=postgres"'
-                }
+sh '''
+./mvnw clean package -DskipTests \
+-Dspring.profiles.active=postgres \
+-Dspring.datasource.url=jdbc:postgresql://localhost:5432/petclinic
+'''                }
             }
 
             stage('Test and Coverage Report') {
                 steps {
-                    sh './mvnw test jacoco:report -Dspring.profiles.active=postgres'
-                }
+sh '''
+./mvnw test jacoco:report \
+-Dspring.profiles.active=postgres \
+-Dspring.datasource.url=jdbc:postgresql://localhost:5432/petclinic \
+-Dspring.datasource.username=petclinic \
+-Dspring.datasource.password=petclinic
+'''                }
             }
 
             stage('SonarQube Analysis') {
