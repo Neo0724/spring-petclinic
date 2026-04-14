@@ -15,6 +15,12 @@ pipeline {
                 }
             }
 
+        stage('Start Database') {
+            steps {
+                sh 'docker-compose up -d'
+            }
+        }
+
             stage('Build') {
                 steps {
                     sh './mvnw clean package -DskipTests'
