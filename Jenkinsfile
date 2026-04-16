@@ -6,7 +6,7 @@ pipeline {
     }
 
     stages {
-        stage('Init and Build Project') {
+        stage('Initialize and Build Project') {
             parallel {
                 // Check Docker Deamon is running
                 stage('Check Tools') {
@@ -16,15 +16,6 @@ pipeline {
                             docker info || { echo "Docker daemon is not running. "; exit 1; }                '''
                         }
                     }
-
-                // start postgres database
-                stage('Start Database') {
-                    steps {
-                        sh 'docker stop petclinic-postgres || true'
-                        sh 'docker rm petclinic-postgres || true'
-                        sh 'docker compose up -d postgres'
-                    }
-                }
 
                 // build project
                 stage('Build') {
@@ -57,7 +48,7 @@ pipeline {
 
         // Run application docker container
         // Close the previous running container, rebuild the application image and start the container
-        stage('Build Image and Run Application') {
+        stage('Build Image and Run Project') {
             steps {
                 sh '''
                 docker compose down
