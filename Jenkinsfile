@@ -37,12 +37,14 @@ pipeline {
 
         stage ('Test and Quality Analysis') {
             parallel {
+                // testing and generate necessary report
                 stage('Test and Coverage Report') {
                     steps {
                         sh './mvnw test jacoco:report surefire-report:report-only'
                     }
                 }
 
+                // SonarQube Analysis
                 stage('SonarQube Analysis') {
                     steps {
                         withCredentials([string(credentialsId: 'sonar_id1', variable: 'SONAR_TOKEN')]) {
@@ -53,18 +55,14 @@ pipeline {
             }
         }
 
-        stage('Build Image') {
-            steps {
-                sh 'docker build -t ${IMG_NM} .'   
-            }
-        }
-
-        stage('Run Docker Container') {
+        // Run application docker container
+        // Close the previous running container, rebuild the application image and start the container
+        stage('Build Image and Run Application') {
             steps {
                 sh '''
-                docker stop myapp || true
-                docker rm myapp || true
-                docker run --name myapp -d -p 8080:8080 ${IMG_NM}
+                docker compose down
+                docker compose build petclinic
+                docker compose up postgres petclinic     
                 '''
             }
         }
@@ -72,24 +70,30 @@ pipeline {
 
     post {
         always {
+
+            // get surefire reports
             junit 'target/surefire-reports/*.xml'
     
+            // generate jacoco report
             jacoco(
                 execPattern: 'target/jacoco.exec',
                 classPattern: 'target/classes',
                 sourcePattern: 'src/main/java'
             )
 
+            // archieve report for download
             archiveArtifacts artifacts: 'target/spring-petclinic-4.0.0-SNAPSHOT.jar'
             archiveArtifacts artifacts: 'target/site/jacoco/**/*'
             archiveArtifacts artifacts: 'target/surefire-reports/**/*'
             archiveArtifacts artifacts: 'target/reports/surefire-report.html'
         }
 
+        // success message
         success {
             echo 'Project Build succeeded!'
         }
 
+        // failure message
         failure {
             echo 'Project Build failed!'
         }
