@@ -79,17 +79,16 @@ pipeline {
             archiveArtifacts artifacts: 'target/spring-petclinic-4.0.0-SNAPSHOT.jar'
             archiveArtifacts artifacts: 'target/site/jacoco/**/*'
             archiveArtifacts artifacts: 'target/surefire-reports/**/*'
-            archiveArtifacts artifacts: 'target/reports/surefire-report.html'
         }
 
         // success message
         success {
-            echo 'Project Build succeeded!'
+            echo 'Project CI succeeded!'
         }
 
         // failure message
         failure {
-            echo 'Project Build failed!'
+            echo 'Project CI failed!'
         }
     }
 }
