@@ -57,7 +57,7 @@ pipeline {
             steps {
                 sh 'docker compose down'
                 sh 'docker compose build petclinic'
-                sh 'docker compose up postgres petclinic'
+                sh 'docker compose up -d postgres petclinic'
             }
         }
      }
@@ -65,7 +65,7 @@ pipeline {
     post {
         always {
 
-            // get surefire reports
+            // get test reports
             junit 'target/surefire-reports/*.xml'
     
             // generate jacoco report
