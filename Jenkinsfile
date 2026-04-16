@@ -64,6 +64,9 @@ pipeline {
 
     post {
         always {
+
+            // get test reports in Jenkins dashboard
+            junit 'target/surefire-reports/*.xml'
     
             // generate jacoco report
             jacoco(
