@@ -6,16 +6,22 @@ pipeline {
     }
 
     stages {
+
+        stage ('Check Tools') {
+            steps {
+                // check docker deamon is running
+                sh '''
+                echo "Checking Docker Environment"
+                    docker info || { echo "Docker daemon is not running. "; exit 1; }                '''
+            }
+        }
         stage('Initialize and Build Project') {
             parallel {
-                // Check Docker Deamon is running
-                stage('Check Tools') {
-                    steps {
-                        sh '''
-                        echo "Checking Docker Environment"
-                            docker info || { echo "Docker daemon is not running. "; exit 1; }                '''
-                        }
-                    }
+
+                // stop exisiting application in docker
+                stage ('Stop Exisiting Application') {
+                    sh 'docker compose down'
+                }
 
                 // build project
                 stage('Build') {
@@ -51,7 +57,6 @@ pipeline {
         stage('Build Image and Run Project') {
             steps {
                 sh '''
-                docker compose down
                 docker compose build petclinic
                 docker compose up postgres petclinic     
                 '''
