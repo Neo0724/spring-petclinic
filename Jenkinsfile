@@ -55,11 +55,9 @@ pipeline {
         // Close the previous running container, rebuild the application image and start the container
         stage('Build Image and Run Project') {
             steps {
-                sh '''
-                docker compose down
-                docker compose build petclinic
-                docker compose up postgres petclinic     
-                '''
+                sh 'docker compose down'
+                sh 'docker compose build petclinic'
+                sh 'docker compose up postgres petclinic'
             }
         }
      }
