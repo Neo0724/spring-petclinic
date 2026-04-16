@@ -56,6 +56,7 @@ pipeline {
         stage('Build Image and Run Project') {
             steps {
                 sh '''
+                docker compose down
                 docker compose build petclinic
                 docker compose up postgres petclinic     
                 '''
